@@ -22,7 +22,7 @@
         <Nullable>enable</Nullable>
 
         <!-- Display name -->
-        <ApplicationTitle>MAUIBlazorCamera</ApplicationTitle>
+        <ApplicationTitle>MAUI Blazor Camera</ApplicationTitle>
 
         <!-- App Identifier -->
         <ApplicationId>com.companyname.mauiblazorcamera</ApplicationId>
@@ -58,6 +58,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

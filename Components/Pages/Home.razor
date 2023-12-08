@@ -1,10 +1,12 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Extensions.Hosting
 @using Microsoft.Maui.Graphics;
 @using System.Drawing;
 @using System.Diagnostics;
 @using SkiaSharp;
-@inject IJSRuntime JSRuntime
+@inject IAppInfoService AppInfoService
+
 <h1>Camera</h1>
 <style>
     .custom-input-file {
@@ -28,48 +30,286 @@
     }
 
 </style>
+<button @onclick="ShowAlert">Show Alert</button>
 <div class="container">
     <div class="row">
-        <div class="mb-3  col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
-            <InputFile accept="image/*"
-                       name="Picture1"
-                       class="form-control ex2"
-                       style="padding:2px;border-radius:5px;display:none"
-                       OnChange="e => HandleFileChange(e, nameof(Picture1))"
-                       capture="capture" id="Picture10" data-original-text="Get Photo" />
-            <label for="Picture10" class="custom-input-file text-center" id="Picture11">
-                <span id="inputFileLabel">Get Photo (1)</span>
-            </label>
+        <div class="mb-3 col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <img id="Picture1" style="max-width:100%; height:auto;padding:2px;border-radius:5px;margin:0 0 10px 0;display:none;" />
+            <div class="row" style="margin-right:5px;">
+                <div class=" col-md-6 col-12 text-center" id="Picture11">
+                    <InputFile accept="image/*"
+                               name="Picture1"
+                               class="form-control ex2"
+                               style="padding:2px;border-radius:5px;display:none"
+                               OnChange="e => HandleFileChange(e, nameof(Picture1))"
+                               capture="capture" id="Picture10" />
+                    <label id="inputFileLabel" for="Picture10" class="btn btn-primary" style="width:100%">
+                        <span>Library Photo (1)</span>
+                    </label>
+                </div>
+                <div class=" col-md-6 col-12 text-center" id="cameraButton_Picture1">
+                    <button style="width:100%" class="btn btn-primary" @onclick="async () => await CapturePhotos(nameof(Picture1))">Camera Photo (1)</button>
+                </div>
+            </div>
+            <div class="col-12 text-center mt=4" id="deleteButton_Picture1" style="display:none;">
+                <button @onclick="async () => await DeleteImage(nameof(Picture1))" class="form-control btn btn-lg btn-info" style="width:100%">Delete (1)</button>
+            </div>
         </div>
 
-        <div class="mb-3  col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
-            <InputFile accept="image/*"
-                   name="Picture2"
-                   class="form-control ex2"
-                   style="padding:2px;border-radius:5px;display:none"
-                   OnChange="e => HandleFileChange(e, nameof(Picture1))"
-                   capture="capture" id="Picture20" />
-            <label for="Picture20" class="custom-input-file text-center" id="Picture21">
-                <span id="inputFileLabel">Get Photo (2)</span>
-            </label>
+        <div class="mb-3 col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <img id="Picture2" style="max-width:100%; height:auto;padding:2px;border-radius:5px;margin:0 0 10px 0;display:none;" />
+            <div class="row" style="margin-left:5px;">
+                <div class=" col-md-6 col-12 text-center" id="Picture21">
+                    <InputFile accept="image/*"
+                               name="Picture2"
+                               class="form-control ex2"
+                               style="padding:2px;border-radius:5px;display:none"
+                               OnChange="e => HandleFileChange(e, nameof(Picture2))"
+                               capture="capture" id="Picture20" />
+                    <label id="inputFileLabel" for="Picture20" class="btn btn-primary" style="width:100%">
+                        <span>Library Photo (2)</span>
+                    </label>
+                </div>
+                <div class=" col-md-6 col-12 text-center" id="cameraButton_Picture2">
+                    <button style="width:100%" class="btn btn-primary" @onclick="async () => await CapturePhotos(nameof(Picture2))">Camera Photo (2)</button>
+                </div>
+            </div>
+            <div class="col-12 text-center mt=4" id="deleteButton_Picture2" style="display:none;">
+                <button @onclick="async () => await DeleteImage(nameof(Picture2))" class="form-control btn btn-lg btn-info" style="width:100%">Delete (2)</button>
+            </div>
+        </div>
+    </div>
+    <hr />
+<div class="row">
+        <div class="mb-3 col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <img id="Picture3" style="max-width:100%; height:auto;padding:2px;border-radius:5px;margin:0 0 10px 0;display:none;" />
+            <div class="row" style="margin-right:5px;">
+                <div class=" col-md-6 col-12 text-center" id="Picture31">
+                    <InputFile accept="image/*"
+                               name="Picture3"
+                               class="form-control ex2"
+                               style="padding:2px;border-radius:5px;display:none"
+                               OnChange="e => HandleFileChange(e, nameof(Picture3))"
+                               capture="capture" id="Picture30" />
+                    <label id="inputFileLabel" for="Picture30" class="btn btn-primary" style="width:100%">
+                        <span>Library Photo (3)</span>
+                    </label>
+                </div>
+                <div class=" col-md-6 col-12 text-center" id="cameraButton_Picture3">
+                    <button style="width:100%" class="btn btn-primary" @onclick="async () => await CapturePhotos(nameof(Picture3))">Camera Photo (3)</button>
+                </div>
+            </div>
+            <div class="col-12 text-center mt=4" id="deleteButton_Picture3" style="display:none;">
+                <button @onclick="async () => await DeleteImage(nameof(Picture3))" class="form-control btn btn-lg btn-info" style="width:100%">Delete (3)</button>
+            </div>
         </div>
 
+        <div class="mb-3 col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <img id="Picture4" style="max-width:100%; height:auto;padding:2px;border-radius:5px;margin:0 0 10px 0;display:none;" />
+            <div class="row" style="margin-left:5px;">
+                <div class=" col-md-6 col-12 text-center" id="Picture41">
+                    <InputFile accept="image/*"
+                               name="Picture4"
+                               class="form-control ex2"
+                               style="padding:2px;border-radius:5px;display:none"
+                               OnChange="e => HandleFileChange(e, nameof(Picture4))"
+                               capture="capture" id="Picture40" />
+                    <label id="inputFileLabel" for="Picture40" class="btn btn-primary" style="width:100%">
+                        <span>Library Photo (4)</span>
+                    </label>
+                </div>
+                <div class=" col-md-6 col-12 text-center" id="cameraButton_Picture4">
+                    <button style="width:100%" class="btn btn-primary" @onclick="async () => await CapturePhotos(nameof(Picture4))">Camera Photo (4)</button>
+                </div>
+            </div>
+            <div class="col-12 text-center mt=4" id="deleteButton_Picture4" style="display:none;">
+                <button @onclick="async () => await DeleteImage(nameof(Picture4))" class="form-control btn btn-lg btn-info" style="width:100%">Delete (4)</button>
+            </div>
+        </div>
     </div>
 </div>
-@code {
 
-    private string? Picture1; private string? Picture2;
+@code {
+    @inject IJSRuntime JS
+
+    private void ShowAlert()
+    {
+        var appName = AppInfoService.GetApplicationName();
+        var message = $"This is a custom message from {appName}";
+        JS.InvokeVoidAsync("alert", message);
+    }
+    private byte[]? Picture1; private byte[]? Picture2; private byte[]? Picture3; private byte[]? Picture4;
     private async Task HandleFileChange(InputFileChangeEventArgs e, string pictureName)
+    {
+        try
+        {
+            var maxWidth = 800; var maxHeight = 600;
+            using (var stream = e.File.OpenReadStream(maxAllowedSize: 6000000))
+            {
+                var resizedPicture = await ResizeAndConvertToByteArrayAsync(stream, maxWidth, maxHeight);
+                switch (pictureName)
+                {
+                    case nameof(Picture1):
+                        Picture1 = resizedPicture;
+                        await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture1", Picture1, "Picture11");
+                        break;
+                    case nameof(Picture2):
+                        Picture2 = resizedPicture;
+
+                        await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture2", Picture2, "Picture21");
+                        break;
+                    case nameof(Picture3):
+                        Picture3 = resizedPicture;
+
+                        await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture3", Picture3, "Picture31");
+                        break;
+                    case nameof(Picture4):
+                        Picture4 = resizedPicture;
+
+                        await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture4", Picture4, "Picture41");
+                        break;
+                }
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"HandleFileChange Error: {ex}");
+        }
+    }
+
+    private async Task CapturePhotos(string image)
+    {
+        await Permissions.RequestAsync<Permissions.Camera>();
+        FileResult? photo = null;
+
+        if (DeviceInfo.Current.Platform == DevicePlatform.Android || DeviceInfo.Current.Platform == DevicePlatform.iOS)
+        {
+            photo = await MediaPicker.CapturePhotoAsync();
+        }
+
+        if (photo == null)
+        {
+            return;
+        }
+
+        try
+        {
+            using (var stream = await photo.OpenReadAsync())
+            {
+                var maxWidth = 800;
+                var maxHeight = 600;
+                var resizedPicture = await ResizeAndConvertToByteArrayAsync(stream, maxWidth, maxHeight);
+                if (resizedPicture != null)
+                {
+                    switch (image)
+                    {
+                        case nameof(Picture1):
+                            Picture1 = resizedPicture;
+                            await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture1", Picture1, "Picture11");
+                            break;
+                        case nameof(Picture2):
+                            Picture2 = resizedPicture;
+                            await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture2", Picture2, "Picture21");
+                            break;
+                        case nameof(Picture3):
+                            Picture3 = resizedPicture;
+                            await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture3", Picture3, "Picture31");
+                            break;
+                        case nameof(Picture4):
+                            Picture4 = resizedPicture;
+                            await JS.InvokeAsync<bool>("window.jsFunctions.captureImage", "Picture4", Picture4, "Picture41");
+                            break;
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"CapturePhotos is not available");
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"CapturePhotos Error: {ex}");
+        }
+    }
+
+    private async Task<byte[]> ResizeAndConvertToByteArrayAsync(Stream stream, int maxWidth, int maxHeight)
+    {
+        try
+        {
+            int maxAllowedSize = 6000000;
+            // Copy the content of the stream to a MemoryStream
+            using (var memoryStream = new MemoryStream())
+            {
+                await stream.CopyToAsync(memoryStream);
+                memoryStream.Position = 0; // Reset position to the beginning
+
+                // Check if the original image size exceeds the max allowed size
+                if (memoryStream.Length > maxAllowedSize)
+                {
+                    throw new Exception("Original image size exceeds the maximum allowed size.");
+                }
+
+                try
+                {
+                    using (var original = SKBitmap.Decode(memoryStream))
+                    {
+                        // Resize the image using SkiaSharp
+                        using (var resized = original.Resize(new SKImageInfo(maxWidth, maxHeight), SKFilterQuality.Medium))
+                        {
+                            // Convert the resized image to a byte array
+                            using (var image = SKImage.FromBitmap(resized))
+                            using (var data = image.Encode(SKEncodedImageFormat.Png, 50))
+                            using (var resultStream = new MemoryStream())
+                            {
+                                data.SaveTo(resultStream);
+
+                                // Check if the resulting image size exceeds the max allowed size
+                                if (resultStream.Length > maxAllowedSize)
+                                {
+                                    throw new Exception("Resized image exceeds the maximum allowed size.");
+                                }
+
+                                return resultStream.ToArray();
+                            }
+                        }
+                    }
+                }
+                catch (Exception decodeException)
+                {
+                    Console.WriteLine($"Error decoding SKBitmap: {decodeException.Message}");
+                    throw;
+                }
+            }
+        }
+        catch (Exception streamException)
+        {
+            Console.WriteLine($"Error opening stream: {streamException.Message}");
+            throw;
+        }
+    }
+
+
+    private async Task DeleteImage(string pictureName)
     {
         try
         {
             switch (pictureName)
             {
                 case nameof(Picture1):
-                    Picture1 = pictureName;
+                    Picture1 = null; // Clear the image data
                     break;
                 case nameof(Picture2):
-                    Picture2 = pictureName;
+                    Picture2 = null; // Clear the image data
+                    break;
+                case nameof(Picture3):
+                    Picture3 = null; // Clear the image data
+                    break;
+                case nameof(Picture4):
+                    Picture4 = null; // Clear the image data
                     break;
                 default:
                     break;
@@ -77,9 +317,65 @@
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"HandleFileChange Error: {ex}");
+            Debug.WriteLine($"Image Data error: {ex.Message}");
         }
-        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            // Invoke JavaScript code to handle button renaming
+            await JS.InvokeAsync<bool>("window.jsFunctions.renameButton", new object[] { pictureName });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"JavaScript Error: {ex.Message}");
+        }
+    }
+}
+
+<script>
+    async function captureImage(imageId, imageStream) {
+        const arrayBuffer = await imageStream.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        document.getElementById(imageId).src = url;
+        document.getElementById(imageId).style.display = 'block';
+        return true;
     }
 
-}
+    window.jsFunctions = {
+        captureImage: async function (imageId, imageData, PicId) {
+
+            var DeleteId = 'deleteButton_' + imageId;
+            var CameraId = 'cameraButton_' + imageId;
+            var FileId = imageId + "1";
+  
+            const blob = new Blob([new Uint8Array(imageData)]);
+            const url = URL.createObjectURL(blob);
+
+            document.getElementById(imageId).src = url;
+            document.getElementById(imageId).style.display = 'block';
+            document.getElementById(DeleteId).style.display = 'block';
+            document.getElementById(FileId).style.display = 'none';
+            document.getElementById(CameraId).style.display = 'none';
+
+            return true;
+        },
+
+        renameButton: async function (imageId) {
+
+            var DeleteId = 'deleteButton_' + imageId;
+            var CameraId = 'cameraButton_' + imageId;
+            var FileId = imageId + "1";
+
+            // Set the new text for the button
+            document.getElementById(imageId).style.display = 'none';
+            document.getElementById(DeleteId).style.display = 'none';
+            document.getElementById(FileId).style.display = 'block';
+            document.getElementById(CameraId).style.display = 'block';
+
+            // Add this line to explicitly return true
+            return true;
+        }
+    };
+</script>
+

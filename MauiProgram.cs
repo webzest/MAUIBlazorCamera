@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace MAUIBlazorCamera
 {
@@ -15,7 +16,7 @@ namespace MAUIBlazorCamera
                 });
 
             builder.Services.AddMauiBlazorWebView();
-
+            builder.Services.AddSingleton<IAppInfoService, AppInfoService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
