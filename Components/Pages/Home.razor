@@ -1,0 +1,85 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.Maui.Graphics;
+@using System.Drawing;
+@using System.Diagnostics;
+@using SkiaSharp;
+@inject IJSRuntime JSRuntime
+<h1>Camera</h1>
+<style>
+    .custom-input-file {
+        background-color: darkblue;
+        color: white;
+        border: 1px solid #e5e5e5;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: .5s;
+        width: 100%;
+    }
+
+        .custom-input-file:hover {
+            background-color: lightblue;
+            color: black;
+            border: 1px solid darkblue;
+        }
+
+    buttonLabel:hover {
+        background-color: #87CEEB;
+    }
+
+</style>
+<div class="container">
+    <div class="row">
+        <div class="mb-3  col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <InputFile accept="image/*"
+                       name="Picture1"
+                       class="form-control ex2"
+                       style="padding:2px;border-radius:5px;display:none"
+                       OnChange="e => HandleFileChange(e, nameof(Picture1))"
+                       capture="capture" id="Picture10" data-original-text="Get Photo" />
+            <label for="Picture10" class="custom-input-file text-center" id="Picture11">
+                <span id="inputFileLabel">Get Photo (1)</span>
+            </label>
+        </div>
+
+        <div class="mb-3  col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
+            <InputFile accept="image/*"
+                   name="Picture2"
+                   class="form-control ex2"
+                   style="padding:2px;border-radius:5px;display:none"
+                   OnChange="e => HandleFileChange(e, nameof(Picture1))"
+                   capture="capture" id="Picture20" />
+            <label for="Picture20" class="custom-input-file text-center" id="Picture21">
+                <span id="inputFileLabel">Get Photo (2)</span>
+            </label>
+        </div>
+
+    </div>
+</div>
+@code {
+
+    private string? Picture1; private string? Picture2;
+    private async Task HandleFileChange(InputFileChangeEventArgs e, string pictureName)
+    {
+        try
+        {
+            switch (pictureName)
+            {
+                case nameof(Picture1):
+                    Picture1 = pictureName;
+                    break;
+                case nameof(Picture2):
+                    Picture2 = pictureName;
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"HandleFileChange Error: {ex}");
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+}
