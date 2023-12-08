@@ -5,7 +5,6 @@
 @using System.Drawing;
 @using System.Diagnostics;
 @using SkiaSharp;
-@inject IAppInfoService AppInfoService
 
 <h1>Camera</h1>
 <style>
@@ -30,7 +29,6 @@
     }
 
 </style>
-<button @onclick="ShowAlert">Show Alert</button>
 <div class="container">
     <div class="row">
         <div class="mb-3 col-md-6 col-12 text-center" style="padding:5px;border-radius:5px;">
@@ -132,12 +130,6 @@
 @code {
     @inject IJSRuntime JS
 
-    private void ShowAlert()
-    {
-        var appName = AppInfoService.GetApplicationName();
-        var message = $"This is a custom message from {appName}";
-        JS.InvokeVoidAsync("alert", message);
-    }
     private byte[]? Picture1; private byte[]? Picture2; private byte[]? Picture3; private byte[]? Picture4;
     private async Task HandleFileChange(InputFileChangeEventArgs e, string pictureName)
     {

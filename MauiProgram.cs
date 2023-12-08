@@ -16,7 +16,6 @@ namespace MAUIBlazorCamera
                 });
 
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddSingleton<IAppInfoService, AppInfoService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
